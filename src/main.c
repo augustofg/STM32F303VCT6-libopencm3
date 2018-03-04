@@ -26,7 +26,7 @@
 */
 
 /*
- * Blink a LED in the PA1 pin using the SysTick timer interrupt.
+ * Blink a LED in the PE9 pin using the SysTick timer interrupt.
  */
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/flash.h>
@@ -39,37 +39,30 @@ void sys_tick_handler(void)
 	/*
 	 * Togle the LED state every 500ms (1Hz)
 	 */
-	gpio_toggle(GPIOA, GPIO1);
+	gpio_toggle(GPIOE, GPIO9);
 }
 
 static inline void setup(void)
 {
 	/*
-	 * Use an external 8MHz crystall as the PLL reference, multiply
-	 * the input clock by 3 for the CPU (24MHz)
+	 * Enable the GPIOE clock
 	 */
-	rcc_clock_setup_in_hse_8mhz_out_24mhz();
-	
-	/*
-	 * Enable the GPIOA clock
-	 */
-	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOE);
 
 	/*
-	 * Configure the PA1 pin as a GPIO output (push-pull) 
+	 * Configure the PE9 pin as a GPIO output (push-pull) 
 	 */
-	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ,
-				  GPIO_CNF_OUTPUT_PUSHPULL, GPIO1);
+	gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO9);
 
 	/*
 	 * SysTick timer configuration:
-	 * Clock source = 24MHz / 8 = 3MHz;
-	 * Period: 500ms (1500000 ticks);
+	 * Clock source = 8MHz / 8 = 1MHz;
+	 * Period: 500ms (500000 ticks);
 	 * Set the highest interrupt priority;
 	 * Enable interrupts.
 	 */
 	systick_set_clocksource(STK_CSR_CLKSOURCE_AHB_DIV8);
-	systick_set_reload(1500000 - 1);
+	systick_set_reload(500000 - 1);
 	systick_counter_enable();
 	nvic_set_priority(NVIC_SYSTICK_IRQ, 0);
 	systick_interrupt_enable();
@@ -83,7 +76,7 @@ int main(void)
 	 * Infinite loop wating for interrupts/events
 	 */
 	while (1) {
-		__asm__("wfe");
+
 	}
 
 	return 0;

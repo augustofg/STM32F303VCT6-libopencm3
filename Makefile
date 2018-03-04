@@ -8,21 +8,21 @@ OBJCOPY    = arm-none-eabi-objcopy
 OBJDUMP    = arm-none-eabi-objdump
 PROGRAMMER = openocd
 PGFLAGS    = -f openocd.cfg -c "program $(PRJ_NAME).elf verify reset" -c shutdown
-DEVICE     = STM32F1
+DEVICE     = STM32F3
 OPT       ?= -Og
 LIBPATHS   = libopencm3
-CFLAGS     = -g3 -Wall -mcpu=cortex-m3 -mlittle-endian -mthumb -I $(LIBPATHS)/include/ -D$(DEVICE) $(OPT)
+CFLAGS     = -g3 -Wall -mcpu=cortex-m4 -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb -I $(LIBPATHS)/include/ -D$(DEVICE) $(OPT)
 ASFLAGS    =  $(CFLAGS)
-LDSCRIPT   = $(LIBPATHS)/lib/stm32/f1/stm32f103x8.ld
-LDFLAGS    = -T $(LDSCRIPT)  -L$(LIBPATHS)/lib -lopencm3_stm32f1 --static -nostartfiles -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs
-LIBOPENCM3 = $(LIBPATHS)/lib/libopencm3_stm32f1.a
+LDSCRIPT   = $(LIBPATHS)/lib/stm32/f3/stm32f303xc.ld
+LDFLAGS    = -T $(LDSCRIPT)  -L$(LIBPATHS)/lib -lopencm3_stm32f3 --static -nostartfiles -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs
+LIBOPENCM3 = $(LIBPATHS)/lib/libopencm3_stm32f3.a
 
 .PHONY: all clean flash burn hex bin
 
 all: $(PRJ_NAME).elf
 
 $(LIBOPENCM3):
-	make -C libopencm3 TARGETS=stm32/f1 $(MAKEFLAGS)
+	make -C libopencm3 TARGETS=stm32/f3 $(MAKEFLAGS)
 
 $(PRJ_NAME).elf: $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)

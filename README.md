@@ -1,5 +1,5 @@
 # Description
-This repository contains a simple example of a project using the [libopencm3](https://github.com/libopencm3/libopencm3) with th STM32F103x8 microcontroller.
+This repository contains a simple example of a project using the [libopencm3](https://github.com/libopencm3/libopencm3) with th STM32F303VCTx microcontroller.
 
 # Dependencies
 
